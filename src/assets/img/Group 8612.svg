@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="303.736" height="246.513" viewBox="0 0 303.736 246.513">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.854" y1="-0.144" x2="0.142" y2="0.4" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#8b479b"/>
+      <stop offset="1" stop-color="#e00066"/>
+    </linearGradient>
+    <clipPath id="clip-path">
+      <path id="Path_9084" data-name="Path 9084" d="M557.885,807.678l115.98,16.386-123,42.9,7.02-59.289Z" transform="translate(-550.865 -807.678)" fill="none" clip-rule="evenodd"/>
+    </clipPath>
+    <linearGradient id="linear-gradient-2" x1="1.017" y1="0.058" x2="0.139" y2="0.809" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#f26a42"/>
+      <stop offset="1" stop-color="#ee2c7b"/>
+    </linearGradient>
+    <clipPath id="clip-path-2">
+      <path id="Path_9085" data-name="Path 9085" d="M139.715,713.3H412.234l-5.8,59.336-266.72-35.9V713.3Z" transform="translate(-139.715 -713.295)" fill="none" clip-rule="evenodd"/>
+    </clipPath>
+    <linearGradient id="linear-gradient-3" x1="0" y1="0.5" x2="1" y2="0.5" xlink:href="#linear-gradient-2"/>
+    <clipPath id="clip-path-3">
+      <path id="Path_9086" data-name="Path 9086" d="M755.617,255.049H596.363v48.134H755.617V255.049Z" transform="translate(-596.363 -255.049)" fill="none" clip-rule="evenodd"/>
+    </clipPath>
+    <pattern id="pattern" width="1" height="1" patternTransform="matrix(1, 0, 0, -1, 0, 97.286)" viewBox="0 0 160.084 48.643">
+      <image preserveAspectRatio="none" width="160.084" height="48.643" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABNwAAAF6CAIAAABN09ITAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAktSURBVHhe7dlBTsJQAEVR6jpchkt2kTJCSDAWYiSF/l5IzhlIHPj7+HFy0+lwOOwAAACg8Hb+BAAAgM2d3pTuP9/Pv51cvjidzp8PunHMSk8ZNP7aoGNfevy0yfv2UTd/sX/Nh4wbPDfo8jf6DzR+zbX/nTTu5je67bmXHn907/5Ba68U4+//Zsv+8vlufsHJS8aPGzz3WuMfOvZ3/41jnnv8HwYNvnL/U4rxqx37dOOXPPNy/KC1P6aPr+NPb0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAICMKAUAACAjSgEAAMiIUgAAADKiFAAAgIwoBQAAICNKAQAAyIhSAAAAMqIUAACAjCgFAAAgI0oBAADIiFIAAAAyohQAAIDIbvcNSoIf7X+6Z+UAAAAASUVORK5CYII="/>
+    </pattern>
+    <linearGradient id="linear-gradient-5" y1="0.5" x2="1" y2="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#f26a42"/>
+      <stop offset="1" stop-color="#8b479b"/>
+    </linearGradient>
+  </defs>
+  <g id="Group_8612" data-name="Group 8612" transform="translate(-137.653 -241.536)">
+    <path id="Path_9083" data-name="Path 9083" d="M1047.088,408.18l.381,14.124,17.195-14.124Z" transform="translate(-623.275 -104.996)" fill="url(#linear-gradient)"/>
+    <g id="Group_8607" data-name="Group 8607" transform="translate(267.832 428.76)">
+      <g id="Group_8606" data-name="Group 8606" transform="translate(0 0)" clip-path="url(#clip-path)">
+        <rect id="Rectangle_3773" data-name="Rectangle 3773" width="124.052" height="59.838" transform="translate(-17.148 2.733)" fill="url(#linear-gradient-2)"/>
+      </g>
+    </g>
+    <g id="Group_8609" data-name="Group 8609" transform="translate(138.593 399.092)">
+      <g id="Group_8608" data-name="Group 8608" clip-path="url(#clip-path-2)">
+        <rect id="Rectangle_3774" data-name="Rectangle 3774" width="273.326" height="59.967" transform="translate(-0.326 -0.247)" fill="url(#linear-gradient-3)"/>
+      </g>
+    </g>
+    <g id="Group_8611" data-name="Group 8611" transform="translate(282.134 255.049)">
+      <g id="Group_8610" data-name="Group 8610" transform="translate(0 0)" clip-path="url(#clip-path-3)">
+        <rect id="Rectangle_3775" data-name="Rectangle 3775" width="160.084" height="48.643" transform="translate(-0.359 -0.162)" fill="url(#pattern)"/>
+      </g>
+    </g>
+    <path id="Path_9087" data-name="Path 9087" d="M138.079,354.08H424.044V484.8H138.079V354.08Z" transform="translate(0 -67.902)" stroke="#000" stroke-miterlimit="10" stroke-width="0.853" fill-rule="evenodd" fill="url(#linear-gradient-3)"/>
+    <path id="Path_9088" data-name="Path 9088" d="M800.325,255.049H596.363V316.7H800.325V255.049Z" transform="translate(-358.937 -13.513)" fill-rule="evenodd" fill="url(#linear-gradient-5)"/>
+    <text id="REWARD" transform="translate(249.079 287.049)" fill="#fff" font-size="37" font-family="SegoeUI, Segoe UI" letter-spacing="0.02em"><tspan x="0" y="0">REWARD</tspan></text>
+  </g>
+</svg>

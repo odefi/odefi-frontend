@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="294" height="73" viewBox="0 0 294 73">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.027" y1="0.5" x2="1" y2="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#f94f4f"/>
+      <stop offset="1" stop-color="#8e3ddf"/>
+    </linearGradient>
+  </defs>
+  <g id="Group_8067" data-name="Group 8067" transform="translate(-330 -1437)">
+    <rect id="Rectangle_3734" data-name="Rectangle 3734" width="294" height="73" rx="36.5" transform="translate(330 1437)" fill="url(#linear-gradient)"/>
+    <text id="Built_on" data-name="Built on" transform="translate(343 1482)" fill="#fff" font-size="24" font-family="Montserrat-Regular, Montserrat"><tspan x="0" y="0">Built on</tspan></text>
+    <g id="Group_2006" data-name="Group 2006" transform="translate(450.943 1456.659)">
+      <path id="Path_1588" data-name="Path 1588" d="M79.123,78.58,89.971,95.749l-2.011-.011,2.317,3.695,7.049-.016L79.4,71c-.353.537-24.412,34.526-24.412,34.526l39.134.038L78.1,80.024C78.542,79.386,79.17,78.471,79.123,78.58Zm-16.01,22.67s7.717-10.89,12.425-17.594l11.04,17.5Z" transform="translate(-52.143 -71)" fill="#f6edff"/>
+      <path id="Path_1590" data-name="Path 1590" d="M57.038,96.07l-23.353.049,12.358-17.48.969,1.531,2.5-3.533-3.241-5.3L26.007,99.827l33.355-.076Z" transform="translate(-26.007 -71.306)" fill="#f6edff"/>
+    </g>
+    <text id="EMPOW" transform="translate(504 1483)" fill="#fff" font-size="24" font-family="Montserrat-Medium, Montserrat" font-weight="500"><tspan x="0" y="0">EMPOW</tspan></text>
+  </g>
+</svg>
