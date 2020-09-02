@@ -10,14 +10,6 @@ const ServerAPI = {
         })
     },
 
-    getTotalAmountSaleOrder(round) {
-        return new Promise ( (resolve,reject) => {
-            Axios.get(`${API_ENDPOINT}/getTotalAmountSaleOrder/${round}`)
-            .then(res => (resolve(res.data)))
-            .catch(error => (reject(error.response.data)))
-        })
-    },
-
     getSaleOrder(address) {
         return new Promise ( (resolve,reject) => {
             Axios.get(`${API_ENDPOINT}/getSaleOrder/${address}`)
@@ -41,6 +33,22 @@ const ServerAPI = {
             .catch(error => (reject(error.response.data)))
         })
     },
+
+    getRoundConfig(round) {
+        return new Promise ( (resolve,reject) => {
+            Axios.get(`${API_ENDPOINT}/getRoundConfig/${round}`)
+            .then(res => (resolve(res.data)))
+            .catch(error => (reject(error.response.data)))
+        })
+    },
+
+    getRef(address) {
+        return new Promise ( (resolve,reject) => {
+            Axios.get(`${API_ENDPOINT}/getRef/${address}`)
+            .then(res => (resolve(res.data)))
+            .catch(error => (reject(error.response.data)))
+        })
+    }
 }
 
 export default ServerAPI;

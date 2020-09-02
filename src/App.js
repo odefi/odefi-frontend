@@ -11,7 +11,7 @@ import './assets/scss/style.scss';
 
 const routes = [
     {
-        path: '/',
+        path: '/:ref?',
         exact: true,
         main: ({ location, match }) => <PreSale match={match} />
     },
