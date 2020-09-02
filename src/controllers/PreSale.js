@@ -13,6 +13,7 @@ import _ from 'lodash'
 import { toastr } from 'react-redux-toastr'
 import odefiSaleABI from '../odefi-sale.abi.json'
 import { SALE_CONTRACT_ADDRESS, DEFAULT_REF_ADDRESS } from '../constants'
+import Axios from 'axios'
 
 new Clipboard(".copy")
 
@@ -31,11 +32,12 @@ class PreSaleController extends Component {
             totalAmountPreviousRound: 0,
             saleOrderLocalStorage: false,
             started: false,
-            ref: false
+            ref: false,
+            ethPrice: 0
         };
     };
 
-    componentDidMount() {
+    async componentDidMount() {
         if (this.props.match || this.props.match.params || this.props.match.params.ref) {
             if (EthereumService.web3.utils.isAddress(this.props.match.params.ref)) {
                 Utils.setCookie("ref", this.props.match.params.ref, 30)
@@ -66,8 +68,8 @@ class PreSaleController extends Component {
     }
 
     getRef() {
-        if(!this.props.myAddress) return;
-        ServerAPI.getRef(this.props.myAddress).then(ref => this.setState({ref}))
+        if (!this.props.myAddress) return;
+        ServerAPI.getRef(this.props.myAddress).then(ref => this.setState({ ref }))
     }
 
     getSaleOrderLocalStorage() {
@@ -133,11 +135,13 @@ class PreSaleController extends Component {
     }
 
     getConfig = async () => {
+        const res = await Axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`)
+        const ethPrice = res.data.ethereum.usd
         var config = await ServerAPI.getConfig()
         const roundConfig = await ServerAPI.getRoundConfig(config.current_round)
-        const amountOdefiPerETH = Math.ceil(1 / roundConfig.estimated_price)
+        const amountOdefiPerUSDT = Math.ceil(1 / (roundConfig.estimated_price * ethPrice))
         const previousRoundConfig = await ServerAPI.getRoundConfig(config.current_round - 1)
-        const previousAmountOdefiPerETH = Math.ceil(1 / previousRoundConfig.estimated_price)
+        const previousAmountOdefiPerUSDT = Math.ceil(1 / (previousRoundConfig.estimated_price * ethPrice))
 
         setInterval(() => {
             this.countDown()
@@ -151,8 +155,8 @@ class PreSaleController extends Component {
         this.setState({
             config,
             amount: config.min_order.toString(),
-            amountOdefiPerETH,
-            previousAmountOdefiPerETH,
+            amountOdefiPerUSDT,
+            previousAmountOdefiPerUSDT,
             started
         })
     }
@@ -186,7 +190,7 @@ class PreSaleController extends Component {
             return
         }
 
-        if(amount < config.min_order) {
+        if (amount < config.min_order) {
             toastr.error('', `Min order: ${config.min_order} ETH`)
             return
         }
@@ -240,7 +244,7 @@ class PreSaleController extends Component {
                 <div className="waper">
                     <div className="dark-range" onClick={() => { this.setState({ showPopup: false }) }}></div>
                     <div className="ref-question">
-                        <img onClick={() => this.setState({showPopup: false})} className="close" src={IconClose} alt="close"></img>
+                        <img onClick={() => this.setState({ showPopup: false })} className="close" src={IconClose} alt="close"></img>
                         <div className="current-commission">Current commission rate : {ref ? ref.current_commission_percent : config.ref_percent[0].percent}%</div>
                         <p>The rate of your commission depends on the USD value that one who you refer buys in ODEFI token. The rule is as follows:<br />
                         - Referee buys token with the volume less than 25 ETH, the rate is 5%.<br />
@@ -263,8 +267,8 @@ class PreSaleController extends Component {
             balance,
             countdown,
             amount,
-            amountOdefiPerETH,
-            previousAmountOdefiPerETH,
+            amountOdefiPerUSDT,
+            previousAmountOdefiPerUSDT,
             linkRef,
             started } = this.state
 
@@ -288,7 +292,7 @@ class PreSaleController extends Component {
                             <div className="child">
                                 <p style={{ fontSize: '24px' }}>ETHEREUM</p>
                                 <img src={IconETH} alt="photos"></img>
-                                <p>1 ETH = {amountOdefiPerETH} ODEFI</p>
+                                <p>1 USDT = {amountOdefiPerUSDT} ODEFI</p>
                             </div>
                         </div>
 
@@ -299,7 +303,7 @@ class PreSaleController extends Component {
                                 <div className="percent">
                                     <p>ESTIMATED PRICE</p>
                                 </div>
-                                <span>1 ETH = {amountOdefiPerETH} ODEFI</span>
+                                <span>1 USDT = {amountOdefiPerUSDT} ODEFI</span>
                             </div>
 
                             <p style={{ textAlign: 'right', marginTop: '30px', marginBottom: '10px' }}>YOUR ETH BALANCE: {Utils.formatCurrency(balance)} ETH</p>
@@ -308,7 +312,7 @@ class PreSaleController extends Component {
                                 <span>ETH</span>
                             </div>
 
-                            <p style={{ marginTop: '20px', marginBottom: '30px' }}>PREVIOUS ROUND PRICE: 1 ETH = {previousAmountOdefiPerETH} ODEFI</p>
+                            <p style={{ marginTop: '20px', marginBottom: '30px' }}>PREVIOUS ROUND PRICE: 1 USDT = {previousAmountOdefiPerUSDT} ODEFI</p>
                             {started && <button className="purchase" onClick={() => this.onDeposit()}>DEPOSIT</button>}
                             {started && <p>*MIN ORDER: {config.min_order} ETH</p>}
                         </div>
@@ -317,7 +321,7 @@ class PreSaleController extends Component {
                     {this.props.myAddress && <div className="ref">
                         <div className="wrapper">
                             <p>Referral: </p>
-                            <img onClick={() => this.setState({showPopup: true})} className="question" src={Question} alt="question"></img>
+                            <img onClick={() => this.setState({ showPopup: true })} className="question" src={Question} alt="question"></img>
                             <div className="wape-input">
                                 <input value={linkRef}></input>
                                 <span className="copy" data-clipboard-text={linkRef} onClick={() => this.onCopy()}>COPY</span>
@@ -370,7 +374,8 @@ class PreSaleController extends Component {
                                         <li>BUY ORDER</li>
                                         <li>{value.round}</li>
                                         <li>{value.amount} ETH</li>
-                                        <li ><a href={`https://etherscan.io/tx/${value.txid}`} target="_blank" rel="noopener noreferrer">{value.pending ? "PENDING" : "COMPLETE"} <img src={Arrow} alt="photos"></img></a></li>
+                                        {value.error && <li >{value.error}</li>}
+                                        {!value.error && <li ><a href={`https://etherscan.io/tx/${value.paid_txid}`} target="_blank" rel="noopener noreferrer">COMPLETE <img src={Arrow} alt="photos"></img></a></li>}
                                     </ul>
                                 </div>
                             )
