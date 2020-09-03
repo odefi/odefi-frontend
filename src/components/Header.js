@@ -115,12 +115,12 @@ class Header extends Component {
                                     <p>METAMASK</p>
                                 </a>
                             </li>
-                            <li>
+                            {/* <li>
                                 <a href="https://chrome.google.com/webstore/detail/empow-mutil-wallet/bglmfiihjjbjolgjpflcdklccdlcidgn" target="_blank" rel="noopener noreferrer">
                                     <img src={IconEmpow} alt="photos"></img>
                                     <p>EMPOW MULTI</p>
                                 </a>
-                            </li>
+                            </li> */}
                         </ul>
                     </div>}
                     {myAddress && <div className="group-info">

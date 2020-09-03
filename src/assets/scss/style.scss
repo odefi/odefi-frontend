@@ -1023,10 +1023,29 @@ footer {
             }
 
             .btn-percent {
+                .percent {
+                    p {
+                        font-size: 20px;
+                    }
+                }
                 span {
                     font-size: 20px;
                 }
             }
+        }
+        .ref .wrapper  {
+            .wape-input {
+                input {
+                    width: 70%;
+                }
+
+                span {
+                    font-size: 10px;
+                    width: 30%;
+                }
+
+            }
+
         }
         .overlay .waper .reward {
             width: 100%;
