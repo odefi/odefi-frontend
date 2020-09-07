@@ -33,7 +33,8 @@ class PreSaleController extends Component {
             saleOrderLocalStorage: false,
             started: false,
             ref: false,
-            ethPrice: 0
+            ethPrice: 0,
+            selectedCoin: "ETHEREUM"
         };
     };
 
@@ -248,6 +249,12 @@ class PreSaleController extends Component {
         toastr.success('', "Copied")
     }
 
+    onClickCoin = (name) => {
+        this.setState({
+            selectedCoin: name
+        })
+    }
+
     renderPopup() {
         var { config, ref } = this.state
         return (
@@ -281,7 +288,8 @@ class PreSaleController extends Component {
             amountOdefiPerUSDT,
             previousAmountOdefiPerUSDT,
             linkRef,
-            started } = this.state
+            started,
+            selectedCoin } = this.state
 
         return (
             <div id="presale" className="bg-garena">
@@ -300,10 +308,15 @@ class PreSaleController extends Component {
                             </div>
 
                             <p style={{ fontSize: 28, marginTop: '40px', marginBottom: '10px' }}>ESTIMATED PRICE</p>
-                            <div className="child">
+                            <div className={`child ${ selectedCoin === "ETHEREUM" ? "active" : ""}`} onClick={() => this.onClickCoin("ETHEREUM")}>
                                 <p style={{ fontSize: '24px' }}>ETHEREUM</p>
                                 <img src={IconETH} alt="photos"></img>
                                 <p>1 USDT = {amountOdefiPerUSDT} ODEFI</p>
+                            </div>
+                            <div className={`child child2 ${ selectedCoin === "TRON" ? "active" : ""}`} onClick={() => this.onClickCoin("TRON")}>
+                                <p style={{ fontSize: '24px' }}>TRON</p>
+                                <img src={IconETH} alt="photos"></img>
+                                <p>1 TRON = {amountOdefiPerUSDT} ODEFI</p>
                             </div>
                         </div>
 

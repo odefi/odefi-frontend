@@ -603,7 +603,7 @@ footer {
             text-align: center;
             padding-right: 15px;
             .child {
-                background-color: #e915bf;
+                background-color: #5A5A5A;
                 border-radius: 8px;
                 align-items: center;
                 text-align: center;
@@ -619,6 +619,13 @@ footer {
                     margin-top: 15px;
                     margin-bottom: 15px;
                 }
+            }
+            .child2 {
+                margin-left: 30px;
+            }
+
+            .active {
+                background-color: #e915bf;
             }
         }
 
@@ -1108,7 +1115,7 @@ footer {
     .overlay .waper .processing {
         width: 90%;
         .processing-image {
-            width: 300px;
+            width: 250px;
         }
         .title {
             font-size: 30px;
