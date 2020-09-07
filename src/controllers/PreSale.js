@@ -67,7 +67,7 @@ class PreSaleController extends Component {
         }
 
         if (this.props.myAddress) {
-            var linkRef = `${window.location.origin}/${this.props.myAddress.toLowerCase()}`
+            var linkRef = `${window.location.origin}/presale/${this.props.myAddress.toLowerCase()}`
             this.setState({
                 linkRef
             })
