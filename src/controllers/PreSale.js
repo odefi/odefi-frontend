@@ -38,6 +38,11 @@ class PreSaleController extends Component {
     };
 
     async componentDidMount() {
+        if (window.location.pathname === "/") {
+            window.location.pathname = "/presale";
+            return;
+        }
+
         if (this.props.match || this.props.match.params || this.props.match.params.ref) {
             if (EthereumService.web3.utils.isAddress(this.props.match.params.ref)) {
                 Utils.setCookie("ref", this.props.match.params.ref, 30)
@@ -51,6 +56,12 @@ class PreSaleController extends Component {
     }
 
     componentDidUpdate(prevProps) {
+
+        if (window.location.pathname === "/") {
+            window.location.pathname = "/presale"
+            return;
+        }
+
         if (_.isEqual(prevProps, this.props)) {
             return;
         }
