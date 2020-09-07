@@ -935,6 +935,12 @@ footer {
     }
 }
 
+@media (max-height: 900px) {
+    .overlay .waper .processing .processing-image {
+        width: 300px;
+    }
+}
+
 @media screen and (max-width: 768px) {
     header {
         display: block;

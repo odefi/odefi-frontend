@@ -11,11 +11,6 @@ import './assets/scss/style.scss';
 
 const routes = [
     {
-        path: '/:ref?',
-        exact: true,
-        main: ({ location, match }) => <PreSale match={match} />
-    },
-    {
         path: '/presale/:ref?',
         exact: false,
         main: ({ location, match }) => <PreSale match={match} />
@@ -39,6 +34,11 @@ const routes = [
         path: '/stake',
         exact: false,
         main: ({ location, match }) => <Stake match={match} />
+    },
+    {
+        path: '/',
+        exact: true,
+        main: ({ location, match }) => <PreSale match={match} />
     },
 ];
 
