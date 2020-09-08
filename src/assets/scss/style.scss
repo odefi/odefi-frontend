@@ -603,6 +603,7 @@ footer {
             text-align: center;
             padding-right: 15px;
             .child {
+                cursor: pointer;
                 background-color: #5A5A5A;
                 border-radius: 8px;
                 align-items: center;
@@ -675,6 +676,9 @@ footer {
                 box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.16);
                 font-size: 30px;
                 margin-bottom: 20px;
+            }
+            .isLoading {
+                background-color: #5A5A5A;
             }
         }
     }

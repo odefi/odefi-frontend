@@ -2,7 +2,11 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import {
     setMode,
-    setAddress
+    setETHAddress,
+    setTRXAddress,
+    setSelectedCoin,
+    setTRXBalance,
+    setETHBalance
 } from '../reducers/appReducer'
 
 import EthereumService from '../services/EthereumService';
@@ -13,7 +17,7 @@ import Utils from '../utils';
 import IconDapp from '../assets/img/Group 2039.svg'
 import IconMetamask from '../assets/img/metamask.svg'
 import IconEmpow from '../assets/img/Group 2006.svg'
-
+import IconTronLink from '../assets/img/Tronlink@2x.6b74135c.png'
 import IconMobile from '../assets/img/icon-mobile.svg'
 import IconClose from '../assets/img/icon-close.svg'
 
@@ -29,19 +33,29 @@ class Header extends Component {
     };
 
     async componentDidMount() {
-        if (window.ethereum) {
-            var address = await window.ethereum.enable()
-            address = address[0].toLowerCase()
-            this.setState({
-                myAddress: address
-            })
 
-            this.props.setAddress(address)
+        if (window.tronWeb) {
+            if(!window.tronWeb.defaultAddress.base58) {
+                let interval = setInterval(() => {
+                    if(window.tronWeb.defaultAddress.base58) {
+                        clearInterval(interval)
+                        this.getInfoTRX()
+                    }
+                }, 1000)
+            } else {
+                this.getInfoTRX()
+            }
+        }
+
+        if (window.ethereum) {
+            let address = await window.ethereum.enable()
+            address = address[0].toLowerCase()
+
+            this.props.setETHAddress(address)
+            this.props.setSelectedCoin("ETH")
 
             EthereumService.web3.eth.getBalance(address, (err, balance) => {
-                this.setState({
-                    balance: EthereumService.web3.utils.fromWei(balance)
-                })
+                this.props.setETHBalance(EthereumService.web3.utils.fromWei(balance))
             })
         }
 
@@ -55,6 +69,18 @@ class Header extends Component {
         if (mode === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
         }
+    }
+
+    getInfoTRX = () => {
+        let address = window.tronWeb.defaultAddress.base58
+
+        this.props.setTRXAddress(address)
+        this.props.setSelectedCoin("TRX")
+
+        window.tronWeb.trx.getBalance(address).then(balance => {
+            balance = window.tronWeb.fromSun(balance)
+            this.props.setTRXBalance(balance)
+        })
     }
 
     setMode = () => {
@@ -71,8 +97,8 @@ class Header extends Component {
 
     render() {
 
-        const { redirectComponent, myAddress, balance, showLogin, toggleMenu } = this.state
-        var { isDarkMode } = this.props
+        const { redirectComponent, showLogin, toggleMenu } = this.state
+        var { isDarkMode, selectedCoin, ETHBalance, TRXBalance, ETHAddress, TRXAddress } = this.props
         return (
             <header style={{ backgroundColor: isDarkMode ? "#2A2B30" : "white" }}>
                 {redirectComponent && redirectComponent}
@@ -95,7 +121,7 @@ class Header extends Component {
                     {isDarkMode && <img src={DarkMode} alt="photos" style={{ width: '50px', cursor: "pointer", marginRight: '15px' }} onClick={() => this.setMode()}></img>}
                     {!isDarkMode && <img src={LightMode} alt="photos" style={{ width: '50px', cursor: "pointer", marginRight: '15px' }} onClick={() => this.setMode()}></img>}
 
-                    {!myAddress && <div className="waper-logo login" style={{ backgroundColor: isDarkMode ? "#3F4044" : "#8e3ddf" }} onClick={() => { this.setState({ showLogin: !showLogin }) }}>
+                    {!selectedCoin && <div className="waper-logo login" style={{ backgroundColor: isDarkMode ? "#3F4044" : "#8e3ddf" }} onClick={() => { this.setState({ showLogin: !showLogin }) }}>
                         <p style={{ fontSize: '18px' }}>LOG-IN</p>
                     </div>}
                     {showLogin && <div className="waper-wallet">
@@ -115,6 +141,12 @@ class Header extends Component {
                                     <p>METAMASK</p>
                                 </a>
                             </li>
+                            <li>
+                                <a href="https://chrome.google.com/webstore/detail/tronlink%EF%BC%88%E6%B3%A2%E5%AE%9D%E9%92%B1%E5%8C%85%EF%BC%89/ibnejdfjmmkpcnlpebklmnkoeoihofec" target="_blank" rel="noopener noreferrer">
+                                    <img src={IconTronLink} alt="photos"></img>
+                                    <p>TRON LINK</p>
+                                </a>
+                            </li>
                             {/* <li>
                                 <a href="https://chrome.google.com/webstore/detail/empow-mutil-wallet/bglmfiihjjbjolgjpflcdklccdlcidgn" target="_blank" rel="noopener noreferrer">
                                     <img src={IconEmpow} alt="photos"></img>
@@ -123,13 +155,13 @@ class Header extends Component {
                             </li> */}
                         </ul>
                     </div>}
-                    {myAddress && <div className="group-info">
+                    {selectedCoin && <div className="group-info">
                         <div className="child" style={{ backgroundColor: isDarkMode ? "#3F4044" : "#8E3DDF" }}>
                             <div style={{ width: '10px', height: "10px", borderRadius: '50%', backgroundColor: 'white', marginRight: '5px' }}></div>
-                            <p className="text-truncate">{myAddress}</p>
+                            <p className="text-truncate">{selectedCoin === "TRX" ? TRXAddress : ETHAddress}</p>
                         </div>
                         <div className="child" style={{ backgroundColor: "#0D570D" }}>
-                            <p className="text-truncate">{Utils.formatCurrency(balance)} ETH</p>
+                            <p className="text-truncate">{selectedCoin === "TRX" ? `${Utils.formatCurrency(TRXBalance)} TRX` : `${Utils.formatCurrency(ETHBalance)} ETH`}</p>
                         </div>
                     </div>}
                 </div>
@@ -139,8 +171,17 @@ class Header extends Component {
 };
 
 export default connect(state => ({
-    isDarkMode: state.app.isDarkMode
+    isDarkMode: state.app.isDarkMode,
+    selectedCoin: state.app.selectedCoin,
+    ETHBalance: state.app.ETHBalance,
+    TRXBalance: state.app.TRXBalance,
+    ETHAddress: state.app.ETHAddress,
+    TRXAddress: state.app.TRXAddress
 }), ({
     setMode,
-    setAddress,
+    setETHAddress,
+    setTRXAddress,
+    setSelectedCoin,
+    setTRXBalance,
+    setETHBalance
 }))(Header)

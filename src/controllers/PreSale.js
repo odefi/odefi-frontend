@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import IconETH from '../assets/img/Group 8045.svg'
+import IconTRX from '../assets/img/layer1.svg'
 import IconClose from '../assets/img/close.svg'
 import Arrow from '../assets/img/Group 8784.svg'
 import Question from '../assets/img/question.svg'
@@ -9,11 +10,16 @@ import EthereumService from '../services/EthereumService';
 import ServerAPI from '../ServerAPI'
 import Clipboard from 'clipboard'
 import { connect } from 'react-redux';
-import _ from 'lodash'
+import _, { isBuffer } from 'lodash'
 import { toastr } from 'react-redux-toastr'
 import odefiSaleABI from '../odefi-sale.abi.json'
-import { SALE_CONTRACT_ADDRESS, DEFAULT_REF_ADDRESS } from '../constants'
+import { SALE_CONTRACT_ADDRESS, DEFAULT_REF_ADDRESS, DEFAULT_TRX_REF_ADDRESS, SALE_TRX_CONTRACT_ADDRESS } from '../constants'
 import Axios from 'axios'
+
+import {
+    setSelectedCoin,
+} from '../reducers/appReducer'
+
 
 new Clipboard(".copy")
 
@@ -31,10 +37,11 @@ class PreSaleController extends Component {
             amount: "0",
             totalAmountPreviousRound: 0,
             saleOrderLocalStorage: false,
-            started: false,
+            started: true,
             ref: false,
             ethPrice: 0,
-            selectedCoin: "ETHEREUM"
+            selectedCoin: "ETHEREUM",
+            myAddress: false
         };
     };
 
@@ -48,10 +55,14 @@ class PreSaleController extends Component {
             if (EthereumService.web3.utils.isAddress(this.props.match.params.ref)) {
                 Utils.setCookie("ref", this.props.match.params.ref, 30)
             }
+
+            if (window.tronWeb && window.tronWeb.isAddress(this.props.match.params.ref)) {
+                Utils.setCookie("ref", this.props.match.params.ref, 30)
+            }
         }
+        this.getMyAddress()
 
         this.getConfig()
-        this.getBalance()
         this.getSaleOrderLocalStorage()
         this.getRef()
     }
@@ -67,21 +78,35 @@ class PreSaleController extends Component {
             return;
         }
 
-        if (this.props.myAddress) {
-            var linkRef = `${window.location.origin}/presale/${this.props.myAddress.toLowerCase()}`
+        this.getMyAddress()
+
+        var { selectedCoin, ETHAddress, TRXAddress } = this.props
+
+        if (selectedCoin) {
+            var myAddress = selectedCoin === "ETH" ? ETHAddress : TRXAddress
+            var linkRef = `${window.location.origin}/presale/${myAddress}`
             this.setState({
                 linkRef
             })
         }
 
-        this.getBalance()
         this.getSaleOrder()
         this.getRef()
     }
 
+    getMyAddress = () => {
+        var { selectedCoin, ETHAddress, TRXAddress } = this.props
+        if (selectedCoin) {
+            var myAddress = selectedCoin === "ETH" ? ETHAddress : TRXAddress
+            this.setState({
+                myAddress
+            })
+        }
+    }
+
     getRef() {
-        if (!this.props.myAddress) return;
-        ServerAPI.getRef(this.props.myAddress).then(ref => this.setState({ ref }))
+        if (!this.state.myAddress) return;
+        ServerAPI.getRef(this.state.myAddress).then(ref => this.setState({ ref }))
     }
 
     getSaleOrderLocalStorage() {
@@ -100,10 +125,10 @@ class PreSaleController extends Component {
     getSaleOrder = () => {
         var interval = setInterval(async () => {
             var { saleOrderLocalStorage } = this.state
-            if (this.props.myAddress && saleOrderLocalStorage) {
+            if (this.state.myAddress && saleOrderLocalStorage) {
                 clearInterval(interval)
 
-                ServerAPI.getSaleOrder(this.props.myAddress).then(dbOrders => {
+                ServerAPI.getSaleOrder(this.state.myAddress).then(dbOrders => {
                     var saleOrders = []
                     dbOrders.forEach(orderDB => {
                         saleOrderLocalStorage = saleOrderLocalStorage.filter(x => x.txid !== orderDB.txid)
@@ -119,13 +144,13 @@ class PreSaleController extends Component {
                     window.localStorage.setItem("saleOrderLocalStorage", JSON.stringify(saleOrderLocalStorage))
                 })
 
-                ServerAPI.getSaleOrderHistory(this.props.myAddress).then(orderHistory => {
+                ServerAPI.getSaleOrderHistory(this.state.myAddress).then(orderHistory => {
                     this.setState({
                         orderHistory
                     })
                 })
 
-                ServerAPI.getSaleRef(this.props.myAddress).then(invitedPeople => {
+                ServerAPI.getSaleRef(this.state.myAddress).then(invitedPeople => {
                     this.setState({
                         invitedPeople
                     })
@@ -136,24 +161,20 @@ class PreSaleController extends Component {
         }, 1000)
     }
 
-    getBalance = () => {
-        if (this.props.myAddress) {
-            EthereumService.web3.eth.getBalance(this.props.myAddress, (err, balance) => {
-                this.setState({
-                    balance: EthereumService.web3.utils.fromWei(balance)
-                })
-            })
-        }
-    }
 
     getConfig = async () => {
-        const res = await Axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`)
+        let res = await Axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`)
         const ethPrice = res.data.ethereum.usd
         var config = await ServerAPI.getConfig()
         const roundConfig = await ServerAPI.getRoundConfig(config.current_round)
         const amountOdefiPerUSDT = Math.ceil(1 / (roundConfig.estimated_price * ethPrice))
         const previousRoundConfig = await ServerAPI.getRoundConfig(config.current_round - 1)
         const previousAmountOdefiPerUSDT = Math.ceil(1 / (previousRoundConfig.estimated_price * ethPrice))
+
+        res = await Axios.get('https://api.binance.com/api/v3/ticker/price?symbol=TRXETH')
+
+        var minOrderTRX = parseInt(config.min_order / res.data.price)
+        config.minOrderTRX = minOrderTRX
 
         setInterval(() => {
             this.countDown()
@@ -166,10 +187,10 @@ class PreSaleController extends Component {
 
         this.setState({
             config,
-            amount: config.min_order.toString(),
+            amount: this.props.selectedCoin === "ETH" ? config.min_order.toString() : config.minOrderTRX.toString(),
             amountOdefiPerUSDT,
             previousAmountOdefiPerUSDT,
-            started
+            //  started
         })
     }
 
@@ -193,56 +214,111 @@ class PreSaleController extends Component {
         })
     }
 
-    onDeposit = () => {
-
+    afterDeposit = (result) => {
         const { saleOrderLocalStorage, config, saleOrders, amount } = this.state
-
-        if (!this.props.myAddress) {
-            toastr.info('', "Please login first")
-            return
+        const order = {
+            txid: result,
+            amount: parseFloat(amount),
+            time: new Date().getTime() / 1000,
+            pending: true,
+            round: config.current_round,
+            type: this.props.selectedCoin
         }
 
-        if (amount < config.min_order) {
-            toastr.error('', `Min order: ${config.min_order} ETH`)
-            return
-        }
+        saleOrderLocalStorage.push(order)
+        window.localStorage.setItem("saleOrderLocalStorage", JSON.stringify(saleOrderLocalStorage))
 
-        const ref = Utils.getCookie('ref') || DEFAULT_REF_ADDRESS
+        saleOrders.unshift(order)
+
+        this.setState({
+            saleOrderLocalStorage,
+            saleOrders,
+            isLoading: false
+        })
+
+        toastr.success("", "Order Successfully")
+    }
+
+    onDepositETH = () => {
+        const { myAddress, amount } = this.state
+
+        var ref = Utils.getCookie('ref') || DEFAULT_REF_ADDRESS
 
         const contract = new EthereumService.web3.eth.Contract(odefiSaleABI, SALE_CONTRACT_ADDRESS);
 
         const encodeABI = contract.methods.order(ref).encodeABI()
 
         window.web3.eth.sendTransaction({
-            from: this.props.myAddress,
+            from: myAddress,
             to: SALE_CONTRACT_ADDRESS,
-            value: EthereumService.web3.utils.numberToHex(EthereumService.web3.utils.toWei(this.state.amount)),
+            value: EthereumService.web3.utils.numberToHex(EthereumService.web3.utils.toWei(amount)),
             data: encodeABI
         }, (error, result) => {
             if (error) {
-                return toastr.error(error + "")
+                this.setState({
+                    isLoading: false
+                })
+                return toastr.error("Error")
             }
 
-            const order = {
-                txid: result,
-                amount: parseFloat(amount),
-                time: new Date().getTime() / 1000,
-                pending: true,
-                round: config.current_round
-            }
-
-            saleOrderLocalStorage.push(order)
-            window.localStorage.setItem("saleOrderLocalStorage", JSON.stringify(saleOrderLocalStorage))
-
-            saleOrders.unshift(order)
-
-            this.setState({
-                saleOrderLocalStorage,
-                saleOrders
-            })
-
-            toastr.success("", "Order Successfully")
+            this.afterDeposit(result)
         })
+    }
+
+    onDepositTRX = async () => {
+        const { amount } = this.state
+
+        let ref = Utils.getCookie('ref') || DEFAULT_TRX_REF_ADDRESS
+
+        const contract = await window.tronWeb.contract().at(window.tronWeb.address.toHex(SALE_TRX_CONTRACT_ADDRESS))
+
+        contract.order(ref).send({ shouldPollResponse: true, callValue: window.tronWeb.toSun(amount) }).then(result => {
+            console.log(result)
+            this.afterDeposit(result)
+        }).catch(async error => {
+            if (error.transaction.txID) {
+                var info = await window.tronWeb.trx.getTransactionInfo("6424f0be08603834a02ef46e780646f330dfeacad154116767c2508214e18e21")
+                if (info.receipt.result === "SUCCESS") {
+                    this.afterDeposit(error.transaction.txID)
+                    return;
+                }
+            }
+            toastr.error("Error")
+            this.setState({
+                isLoading: false
+            })
+        })
+    }
+
+    onDeposit = () => {
+        const { config, amount, myAddress } = this.state
+        var { selectedCoin } = this.props
+
+        if (!myAddress) {
+            toastr.info('', "Please login first")
+            return
+        }
+
+        if (selectedCoin === 'ETH' && amount < config.min_order) {
+            toastr.error('', `Min order: ${config.min_order} ETH`)
+            return
+        }
+
+        if (selectedCoin === 'TRX' && amount < config.minOrderTRX) {
+            toastr.error('', `Min order: ${config.minOrderTRX} TRX`)
+            return
+        }
+
+        this.setState({
+            isLoading: true
+        })
+
+        if (selectedCoin === "ETH") {
+            this.onDepositETH()
+        } else {
+            this.onDepositTRX()
+        }
+
     }
 
     onCopy = () => {
@@ -250,9 +326,13 @@ class PreSaleController extends Component {
     }
 
     onClickCoin = (name) => {
-        this.setState({
-            selectedCoin: name
-        })
+        this.props.setSelectedCoin(name)
+        var { config } = this.state
+        if (config) {
+            this.setState({
+                amount: name === "ETH" ? config.min_order.toString() : config.minOrderTRX.toString(),
+            })
+        }
     }
 
     renderPopup() {
@@ -282,14 +362,16 @@ class PreSaleController extends Component {
             invitedPeople,
             showPopup,
             config,
-            balance,
             countdown,
             amount,
             amountOdefiPerUSDT,
             previousAmountOdefiPerUSDT,
             linkRef,
             started,
-            selectedCoin } = this.state
+            myAddress,
+            isLoading } = this.state
+
+        var { selectedCoin, ETHAddress, TRXAddress, ETHBalance, TRXBalance } = this.props
 
         return (
             <div id="presale" className="bg-garena">
@@ -308,16 +390,16 @@ class PreSaleController extends Component {
                             </div>
 
                             <p style={{ fontSize: 28, marginTop: '40px', marginBottom: '10px' }}>ESTIMATED PRICE</p>
-                            <div className={`child ${ selectedCoin === "ETHEREUM" ? "active" : ""}`} onClick={() => this.onClickCoin("ETHEREUM")}>
+                            {ETHAddress && <div className={`child ${selectedCoin === "ETH" ? "active" : ""}`} onClick={() => this.onClickCoin("ETH")}>
                                 <p style={{ fontSize: '24px' }}>ETHEREUM</p>
-                                <img src={IconETH} alt="photos"></img>
+                                <img src={IconETH} alt="photos" style={{ height: '50px' }}></img>
                                 <p>1 USDT = {amountOdefiPerUSDT} ODEFI</p>
-                            </div>
-                            <div className={`child child2 ${ selectedCoin === "TRON" ? "active" : ""}`} onClick={() => this.onClickCoin("TRON")}>
+                            </div>}
+                            {TRXAddress && <div className={`child child2 ${selectedCoin === "TRX" ? "active" : ""}`} onClick={() => this.onClickCoin("TRX")}>
                                 <p style={{ fontSize: '24px' }}>TRON</p>
-                                <img src={IconETH} alt="photos"></img>
-                                <p>1 TRON = {amountOdefiPerUSDT} ODEFI</p>
-                            </div>
+                                <img src={IconTRX} alt="photos" style={{ height: '50px' }}></img>
+                                <p>1 USDT = {amountOdefiPerUSDT} ODEFI</p>
+                            </div>}
                         </div>
 
                         <div className="right">
@@ -330,19 +412,19 @@ class PreSaleController extends Component {
                                 <span>1 USDT = {amountOdefiPerUSDT} ODEFI</span>
                             </div>
 
-                            <p style={{ textAlign: 'right', marginTop: '30px', marginBottom: '10px' }}>YOUR ETH BALANCE: {Utils.formatCurrency(balance)} ETH</p>
+                            <p style={{ textAlign: 'right', marginTop: '30px', marginBottom: '10px' }}>YOUR {selectedCoin} BALANCE: {selectedCoin === "TRX" ? Utils.formatCurrency(TRXBalance) : Utils.formatCurrency(ETHBalance)} {selectedCoin}</p>
                             <div className="wape-input">
                                 <input value={amount} onChange={(e) => { this.setState({ amount: e.target.value }) }}></input>
-                                <span>ETH</span>
+                                <span>{selectedCoin}</span>
                             </div>
 
                             <p style={{ marginTop: '20px', marginBottom: '30px' }}>PREVIOUS ROUND PRICE: 1 USDT = {previousAmountOdefiPerUSDT} ODEFI</p>
-                            {started && <button className="purchase" onClick={() => this.onDeposit()}>DEPOSIT</button>}
-                            {started && <p>*MIN ORDER: {config.min_order} ETH</p>}
+                            {started && <button className={`purchase ${isLoading ? 'isLoading' : ''}`} onClick={() => this.onDeposit()} disabled={isLoading}>{isLoading ? "LOADING..." : "DEPOSIT"}</button>}
+                            {started && <p>*MIN ORDER: {selectedCoin === "ETH" ? config.min_order : config.minOrderTRX} {selectedCoin}</p>}
                         </div>
                     </div>
 
-                    {this.props.myAddress && <div className="ref">
+                    {myAddress && <div className="ref">
                         <div className="wrapper">
                             <p>Referral: </p>
                             <img onClick={() => this.setState({ showPopup: true })} className="question" src={Question} alt="question"></img>
@@ -383,7 +465,7 @@ class PreSaleController extends Component {
                                         <li>{Utils.convertDate(value.time * 1000)}</li>
                                         <li>BUY ORDER</li>
                                         <li>{value.round}</li>
-                                        <li>{value.amount} ETH</li>
+                                        <li>{value.amount} {value.type}</li>
                                         <li ><a href={`https://etherscan.io/tx/${value.txid}`} target="_blank" rel="noopener noreferrer">{value.pending ? "PENDING" : "COMPLETE"} <img src={Arrow} alt="photos"></img></a></li>
                                     </ul>
                                 </div>
@@ -433,6 +515,11 @@ class PreSaleController extends Component {
 }
 
 export default connect(state => ({
-    myAddress: state.app.myAddress
+    selectedCoin: state.app.selectedCoin,
+    ETHAddress: state.app.ETHAddress,
+    TRXAddress: state.app.TRXAddress,
+    ETHBalance: state.app.ETHBalance,
+    TRXBalance: state.app.TRXBalance,
 }), ({
+    setSelectedCoin
 }))(PreSaleController)
