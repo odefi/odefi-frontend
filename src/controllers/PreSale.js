@@ -272,8 +272,7 @@ class PreSaleController extends Component {
 
         const contract = await window.tronWeb.contract().at(window.tronWeb.address.toHex(SALE_TRX_CONTRACT_ADDRESS))
 
-        contract.order(ref).send({ shouldPollResponse: true, callValue: window.tronWeb.toSun(amount) }).then(result => {
-            console.log(result)
+        contract.order(ref).send({ shouldPollResponse: false, callValue: window.tronWeb.toSun(amount) }).then(result => {
             this.afterDeposit(result)
         }).catch(async error => {
             if (error.transaction.txID) {
@@ -466,7 +465,7 @@ class PreSaleController extends Component {
                                         <li>BUY ORDER</li>
                                         <li>{value.round}</li>
                                         <li>{value.amount} {value.type}</li>
-                                        <li ><a href={`https://etherscan.io/tx/${value.txid}`} target="_blank" rel="noopener noreferrer">{value.pending ? "PENDING" : "COMPLETE"} <img src={Arrow} alt="photos"></img></a></li>
+                                        <li ><a href={value.type === 'TRX' ? `https://tronscan.org/#/transaction/${value.txid}` : `https://etherscan.io/tx/${value.txid}`} target="_blank" rel="noopener noreferrer">{value.pending ? "PENDING" : "COMPLETE"} <img src={Arrow} alt="photos"></img></a></li>
                                     </ul>
                                 </div>
                             )
@@ -479,9 +478,9 @@ class PreSaleController extends Component {
                                         <li>{Utils.convertDate(value.time * 1000)}</li>
                                         <li>BUY ORDER</li>
                                         <li>{value.round}</li>
-                                        <li>{value.amount} ETH</li>
+                                        <li>{value.amount} {value.type}</li>
                                         {value.error && <li >{value.error}</li>}
-                                        {!value.error && <li ><a href={`https://etherscan.io/tx/${value.paid_txid}`} target="_blank" rel="noopener noreferrer">COMPLETE <img src={Arrow} alt="photos"></img></a></li>}
+                                        {!value.error && <li ><a href={value.type === 'TRX' ? `https://tronscan.org/#/transaction/${value.paid_txid}` : `https://etherscan.io/tx/${value.paid_txid}`} target="_blank" rel="noopener noreferrer">COMPLETE <img src={Arrow} alt="photos"></img></a></li>}
                                     </ul>
                                 </div>
                             )
@@ -492,11 +491,11 @@ class PreSaleController extends Component {
                                 <div>
                                     <ul className="table-title" style={{ borderWidth: 0 }}>
                                         <li>{Utils.convertDate(value.time * 1000)}</li>
-                                        <li><a href={`https://etherscan.io/address/${value.buyer}`} target="_blank" rel="noopener noreferrer" className="text-truncate">{value.buyer} <img src={Arrow} alt="photos"></img></a></li>
+                                        <li><a href={value.type === 'TRX' ? `https://tronscan.org/#/address/${value.buyer}` : `https://etherscan.io/address/${value.buyer}`} target="_blank" rel="noopener noreferrer" className="text-truncate">{value.buyer} <img src={Arrow} alt="photos"></img></a></li>
                                         <li>{value.round}</li>
-                                        <li>{value.bought_amount ? `${parseInt(value.bought_amount)} ODEFI` : "PENDING"}</li>
+                                        <li>{value.bought_amount ? `${parseInt(value.bought_amount)} ${value.type}` : "PENDING"}</li>
                                         <li>{value.ref_received ? `${parseInt(value.ref_received)} ODEFI` : "PENDING"}</li>
-                                        <li>{value.ref_paid_txid ? <a href={`https://etherscan.io/tx/${value.ref_paid_txid}`} target="_blank" rel="noopener noreferrer">COMPLETE <img src={Arrow} alt="photos"></img></a> : "PENDING"}</li>
+                                        <li>{value.ref_paid_txid ? <a href={value.type === 'TRX' ? `https://tronscan.org/#/transaction/${value.ref_paid_txid}` : `https://etherscan.io/tx/${value.ref_paid_txid}`} target="_blank" rel="noopener noreferrer">COMPLETE <img src={Arrow} alt="photos"></img></a> : "PENDING"}</li>
                                     </ul>
                                 </div>
                             )
