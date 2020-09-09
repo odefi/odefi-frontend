@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import _, { isBuffer } from 'lodash'
 import { toastr } from 'react-redux-toastr'
 import odefiSaleABI from '../odefi-sale.abi.json'
-import { SALE_CONTRACT_ADDRESS, DEFAULT_REF_ADDRESS, DEFAULT_TRX_REF_ADDRESS, SALE_TRX_CONTRACT_ADDRESS } from '../constants'
+import { SALE_CONTRACT_ADDRESS, SALE_TRX_CONTRACT_ADDRESS } from '../constants'
 import Axios from 'axios'
 
 import {
@@ -37,7 +37,7 @@ class PreSaleController extends Component {
             amount: "0",
             totalAmountPreviousRound: 0,
             saleOrderLocalStorage: false,
-            started: true,
+            started: false,
             ref: false,
             ethPrice: 0,
             selectedCoin: "ETHEREUM",
@@ -190,7 +190,7 @@ class PreSaleController extends Component {
             amount: this.props.selectedCoin === "ETH" ? config.min_order.toString() : config.minOrderTRX.toString(),
             amountOdefiPerUSDT,
             previousAmountOdefiPerUSDT,
-            //  started
+             started
         })
     }
 
@@ -242,7 +242,7 @@ class PreSaleController extends Component {
     onDepositETH = () => {
         const { myAddress, amount } = this.state
 
-        var ref = Utils.getCookie('ref') || DEFAULT_REF_ADDRESS
+        var ref = Utils.getCookie('ref') || "null"
 
         const contract = new EthereumService.web3.eth.Contract(odefiSaleABI, SALE_CONTRACT_ADDRESS);
 
@@ -258,7 +258,7 @@ class PreSaleController extends Component {
                 this.setState({
                     isLoading: false
                 })
-                return toastr.error("Error")
+                return toastr.error(error + "")
             }
 
             this.afterDeposit(result)
@@ -268,16 +268,15 @@ class PreSaleController extends Component {
     onDepositTRX = async () => {
         const { amount } = this.state
 
-        let ref = Utils.getCookie('ref') || DEFAULT_TRX_REF_ADDRESS
+        let ref = Utils.getCookie('ref') || "null"
 
         const contract = await window.tronWeb.contract().at(window.tronWeb.address.toHex(SALE_TRX_CONTRACT_ADDRESS))
 
-        contract.order(ref).send({ shouldPollResponse: true, callValue: window.tronWeb.toSun(amount) }).then(result => {
-            console.log(result)
+        contract.order(ref).send({ shouldPollResponse: false, callValue: window.tronWeb.toSun(amount) }).then(result => {
             this.afterDeposit(result)
         }).catch(async error => {
             if (error.transaction.txID) {
-                var info = await window.tronWeb.trx.getTransactionInfo("6424f0be08603834a02ef46e780646f330dfeacad154116767c2508214e18e21")
+                var info = await window.tronWeb.trx.getTransactionInfo(error.transaction.txID)
                 if (info.receipt.result === "SUCCESS") {
                     this.afterDeposit(error.transaction.txID)
                     return;
@@ -503,7 +502,7 @@ class PreSaleController extends Component {
                         })}
                     </div>}
 
-                    <p style={{ marginBottom: 20, fontSize: 12, color: "#77838f" }}>Current Block: {Utils.formatCurrency(config.current_block, 0)}</p>
+                    <p style={{ marginBottom: 20, fontSize: 12, color: "#77838f" }}>Synced Block (ETH: {Utils.formatCurrency(config.current_block_eth, 0)} - TRX: {Utils.formatCurrency(config.current_block_trx, 0)}) </p>
 
                     {showPopup && this.renderPopup()}
                 </div>

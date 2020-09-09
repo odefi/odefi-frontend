@@ -30,6 +30,8 @@ class Header extends Component {
             showLogin: false,
             toggleMenu: false
         }
+
+        this.ETHActive = false
     };
 
     async componentDidMount() {
@@ -53,6 +55,7 @@ class Header extends Component {
 
             this.props.setETHAddress(address)
             this.props.setSelectedCoin("ETH")
+            this.ETHActive = true
 
             EthereumService.web3.eth.getBalance(address, (err, balance) => {
                 this.props.setETHBalance(EthereumService.web3.utils.fromWei(balance))
@@ -75,7 +78,7 @@ class Header extends Component {
         let address = window.tronWeb.defaultAddress.base58
 
         this.props.setTRXAddress(address)
-        this.props.setSelectedCoin("TRX")
+        if(!this.ETHActive) this.props.setSelectedCoin("TRX")
 
         window.tronWeb.trx.getBalance(address).then(balance => {
             balance = window.tronWeb.fromSun(balance)
