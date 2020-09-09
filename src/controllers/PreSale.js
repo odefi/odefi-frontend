@@ -452,9 +452,7 @@ class PreSaleController extends Component {
                             <li>DATE | TIME</li>
                             <li>WALLET ADDRESS</li>
                             <li>ROUND</li>
-                            <li>BOUGHT AMOUNT</li>
-                            <li>YOU RECEIVED</li>
-                            <li>TXID</li>
+                            <li>AMOUNT</li>
                         </ul>}
 
                         {selectedChild === 'YOUR ORDER' && saleOrders.map((value, index) => {
@@ -493,9 +491,7 @@ class PreSaleController extends Component {
                                         <li>{Utils.convertDate(value.time * 1000)}</li>
                                         <li><a href={value.type === 'TRX' ? `https://tronscan.org/#/address/${value.buyer}` : `https://etherscan.io/address/${value.buyer}`} target="_blank" rel="noopener noreferrer" className="text-truncate">{value.buyer} <img src={Arrow} alt="photos"></img></a></li>
                                         <li>{value.round}</li>
-                                        <li>{value.bought_amount ? `${parseInt(value.bought_amount)} ${value.type}` : "PENDING"}</li>
-                                        <li>{value.ref_received ? `${parseInt(value.ref_received)} ODEFI` : "PENDING"}</li>
-                                        <li>{value.ref_paid_txid ? <a href={value.type === 'TRX' ? `https://tronscan.org/#/transaction/${value.ref_paid_txid}` : `https://etherscan.io/tx/${value.ref_paid_txid}`} target="_blank" rel="noopener noreferrer">COMPLETE <img src={Arrow} alt="photos"></img></a> : "PENDING"}</li>
+                                        <li>{`${value.amount} ${value.type}`}</li>
                                     </ul>
                                 </div>
                             )
