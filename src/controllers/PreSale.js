@@ -342,9 +342,9 @@ class PreSaleController extends Component {
                         <img onClick={() => this.setState({ showPopup: false })} className="close" src={IconClose} alt="close"></img>
                         <div className="current-commission">Current commission rate : {ref ? ref.current_commission_percent : config.ref_percent[0].percent}%</div>
                         <p>The rate of your commission depends on the USD value that one who you refer buys in ODEFI token. The rule is as follows:<br />
-                        - Referee buys token with the volume less than 25 ETH, the rate is 5%.<br />
-                        - Referee buys token with the volume from 25 - 110 ETH, the rate is 8%.<br />
-                        - Referee buys token with the volume from greater than 110 ETH, the rate is 10%.<br />
+                        - Referee buys token with the volume less than 10,000 USDT, the rate is 5%.<br />
+                        - Referee buys token with the volume from 10,000 - 50,000 USDT, the rate is 8%.<br />
+                        - Referee buys token with the volume from greater than 50,000 USDT, the rate is 10%.<br />
                         Your commission will be paid at the end of each sale round until you fully receive your commission based on the rule above.</p>
                     </div>
                 </div>
