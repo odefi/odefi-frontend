@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import _, { isBuffer } from 'lodash'
 import { toastr } from 'react-redux-toastr'
 import odefiSaleABI from '../odefi-sale.abi.json'
-import { SALE_CONTRACT_ADDRESS, SALE_TRX_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS, TOKEN_TRX_CONTRACT_ADDRESS } from '../constants'
+import { SALE_CONTRACT_ADDRESS, SALE_TRX_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS, TOKEN_TRX_CONTRACT_ADDRESS, ETH_DECIMAL, TRX_DECIMAL } from '../constants'
 import Axios from 'axios'
 
 import {
@@ -379,7 +379,7 @@ class PreSaleController extends Component {
                     <p style={{ fontSize: '55px', color: 'white', marginTop: '50px' }}>PRE-SALE ODEFI TOKEN</p>
                     <div className="wapper">
                         <div className="left">
-                            <p style={{ fontSize: 28 }}>ROUND: {config.current_round}</p>
+                            <p style={{ fontSize: 29 }}>ROUND: {config.current_round}</p>
                             <div className="btn-percent">
                                 <div className="percent">
                                     {started && <p>END AT</p>}
@@ -402,7 +402,8 @@ class PreSaleController extends Component {
                         </div>
 
                         <div className="right">
-                            <p style={{ marginTop: 0, fontSize: '16px', lineHeight: 2.6 }}>SMART CONTRACT: {selectedCoin === "ETH" ? TOKEN_CONTRACT_ADDRESS : TOKEN_TRX_CONTRACT_ADDRESS}</p>
+                            <p style={{ marginTop: 0, fontSize: '15px', textAlign: "left" }}>SMART CONTRACT: {selectedCoin === "ETH" ? TOKEN_CONTRACT_ADDRESS : TOKEN_TRX_CONTRACT_ADDRESS}</p>
+                            <p style={{ marginTop: 0, fontSize: '15px', textAlign: "left" }}>DECIMAL: {selectedCoin === "ETH" ? ETH_DECIMAL : TRX_DECIMAL}</p>
 
                             <div className="btn-percent">
                                 <div className="percent">
