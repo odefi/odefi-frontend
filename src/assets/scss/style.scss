@@ -609,10 +609,11 @@ footer {
                 align-items: center;
                 text-align: center;
                 display: inline-block;
-                padding: 20px 25px;
+                padding: 20px 0px;
                 -webkit-box-shadow: 5px 5px 0px 5px rgba(249, 249, 249, 0.16);
                 -moz-box-shadow: 5px 5px 3px 5px rgba(249, 249, 249, 0.16);
                 box-shadow: 5px 5px 3px rgba(249, 249, 249, 0.16);
+                width: 200px;
 
                 img {
                     width: 30%;

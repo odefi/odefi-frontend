@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import _, { isBuffer } from 'lodash'
 import { toastr } from 'react-redux-toastr'
 import odefiSaleABI from '../odefi-sale.abi.json'
-import { SALE_CONTRACT_ADDRESS, SALE_TRX_CONTRACT_ADDRESS } from '../constants'
+import { SALE_CONTRACT_ADDRESS, SALE_TRX_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS, TOKEN_TRX_CONTRACT_ADDRESS } from '../constants'
 import Axios from 'axios'
 
 import {
@@ -163,18 +163,13 @@ class PreSaleController extends Component {
 
 
     getConfig = async () => {
-        let res = await Axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`)
-        const ethPrice = res.data.ethereum.usd
         var config = await ServerAPI.getConfig()
         const roundConfig = await ServerAPI.getRoundConfig(config.current_round)
-        const amountOdefiPerUSDT = Math.ceil(1 / (roundConfig.estimated_price * ethPrice))
+        const amountOdefiPerUSDT = Math.ceil(1 / roundConfig.estimated_price)
+        const amountOdefiPerETH = parseInt(amountOdefiPerUSDT * config.eth_price)
+        const amountOdefiPerTRX = Utils.formatCurrency(amountOdefiPerUSDT * config.trx_price, 2)
         const previousRoundConfig = await ServerAPI.getRoundConfig(config.current_round - 1)
-        const previousAmountOdefiPerUSDT = Math.ceil(1 / (previousRoundConfig.estimated_price * ethPrice))
-
-        res = await Axios.get('https://api.binance.com/api/v3/ticker/price?symbol=TRXETH')
-
-        var minOrderTRX = parseInt(config.min_order / res.data.price)
-        config.minOrderTRX = minOrderTRX
+        const previousAmountOdefiPerUSDT = Math.ceil(1 / previousRoundConfig.estimated_price)
 
         setInterval(() => {
             this.countDown()
@@ -187,10 +182,12 @@ class PreSaleController extends Component {
 
         this.setState({
             config,
-            amount: this.props.selectedCoin === "ETH" ? config.min_order.toString() : config.minOrderTRX.toString(),
+            amount: this.props.selectedCoin === "ETH" ? config.min_order_eth.toString() : config.min_order_trx.toString(),
             amountOdefiPerUSDT,
+            amountOdefiPerETH,
+            amountOdefiPerTRX,
             previousAmountOdefiPerUSDT,
-             started
+            started
         })
     }
 
@@ -216,9 +213,10 @@ class PreSaleController extends Component {
 
     afterDeposit = (result) => {
         const { saleOrderLocalStorage, config, saleOrders, amount } = this.state
+        const price = this.props.selectedCoin === "ETH" ? config.eth_price : config.trx_price
         const order = {
             txid: result,
-            amount: parseFloat(amount),
+            amount: parseFloat(amount) * price,
             time: new Date().getTime() / 1000,
             pending: true,
             round: config.current_round,
@@ -298,12 +296,12 @@ class PreSaleController extends Component {
             return
         }
 
-        if (selectedCoin === 'ETH' && amount < config.min_order) {
+        if (selectedCoin === 'ETH' && amount < config.min_order_eth) {
             toastr.error('', `Min order: ${config.min_order} ETH`)
             return
         }
 
-        if (selectedCoin === 'TRX' && amount < config.minOrderTRX) {
+        if (selectedCoin === 'TRX' && amount < config.min_order_trx) {
             toastr.error('', `Min order: ${config.minOrderTRX} TRX`)
             return
         }
@@ -329,7 +327,7 @@ class PreSaleController extends Component {
         var { config } = this.state
         if (config) {
             this.setState({
-                amount: name === "ETH" ? config.min_order.toString() : config.minOrderTRX.toString(),
+                amount: name === "ETH" ? config.min_order_eth.toString() : config.min_order_trx.toString(),
             })
         }
     }
@@ -364,6 +362,8 @@ class PreSaleController extends Component {
             countdown,
             amount,
             amountOdefiPerUSDT,
+            amountOdefiPerETH,
+            amountOdefiPerTRX,
             previousAmountOdefiPerUSDT,
             linkRef,
             started,
@@ -392,17 +392,17 @@ class PreSaleController extends Component {
                             {ETHAddress && <div className={`child ${selectedCoin === "ETH" ? "active" : ""}`} onClick={() => this.onClickCoin("ETH")}>
                                 <p style={{ fontSize: '24px' }}>ETHEREUM</p>
                                 <img src={IconETH} alt="photos" style={{ height: '50px' }}></img>
-                                <p>1 USDT = {amountOdefiPerUSDT} ODEFI</p>
+                                <p>1 ETH = {amountOdefiPerETH} ODEFI</p>
                             </div>}
                             {TRXAddress && <div className={`child child2 ${selectedCoin === "TRX" ? "active" : ""}`} onClick={() => this.onClickCoin("TRX")}>
                                 <p style={{ fontSize: '24px' }}>TRON</p>
                                 <img src={IconTRX} alt="photos" style={{ height: '50px' }}></img>
-                                <p>1 USDT = {amountOdefiPerUSDT} ODEFI</p>
+                                <p>1 TRX = {amountOdefiPerTRX} ODEFI</p>
                             </div>}
                         </div>
 
                         <div className="right">
-                            <p style={{ marginTop: 0, fontSize: '28px' }}>TOTAL SALE: {config.token_sale_amount} ODEFI</p>
+                            <p style={{ marginTop: 0, fontSize: '16px', lineHeight: 2.6 }}>SMART CONTRACT: {selectedCoin === "ETH" ? TOKEN_CONTRACT_ADDRESS : TOKEN_TRX_CONTRACT_ADDRESS}</p>
 
                             <div className="btn-percent">
                                 <div className="percent">
@@ -419,7 +419,7 @@ class PreSaleController extends Component {
 
                             <p style={{ marginTop: '20px', marginBottom: '30px' }}>PREVIOUS ROUND PRICE: 1 USDT = {previousAmountOdefiPerUSDT} ODEFI</p>
                             {started && <button className={`purchase ${isLoading ? 'isLoading' : ''}`} onClick={() => this.onDeposit()} disabled={isLoading}>{isLoading ? "LOADING..." : "DEPOSIT"}</button>}
-                            {started && <p>*MIN ORDER: {selectedCoin === "ETH" ? config.min_order : config.minOrderTRX} {selectedCoin}</p>}
+                            {started && <p>*MIN ORDER: {selectedCoin === "ETH" ? config.min_order_eth : config.min_order_trx} {selectedCoin}</p>}
                         </div>
                     </div>
 
@@ -462,7 +462,7 @@ class PreSaleController extends Component {
                                         <li>{Utils.convertDate(value.time * 1000)}</li>
                                         <li>BUY ORDER</li>
                                         <li>{value.round}</li>
-                                        <li>{value.amount} {value.type}</li>
+                                        <li>{value.amount} USDT</li>
                                         <li ><a href={value.type === 'TRX' ? `https://tronscan.org/#/transaction/${value.txid}` : `https://etherscan.io/tx/${value.txid}`} target="_blank" rel="noopener noreferrer">{value.pending ? "PENDING" : "COMPLETE"} <img src={Arrow} alt="photos"></img></a></li>
                                     </ul>
                                 </div>
@@ -476,7 +476,7 @@ class PreSaleController extends Component {
                                         <li>{Utils.convertDate(value.time * 1000)}</li>
                                         <li>BUY ORDER</li>
                                         <li>{value.round}</li>
-                                        <li>{value.amount} {value.type}</li>
+                                        <li>{value.amount} USDT</li>
                                         {value.error && <li >{value.error}</li>}
                                         {!value.error && <li ><a href={value.type === 'TRX' ? `https://tronscan.org/#/transaction/${value.paid_txid}` : `https://etherscan.io/tx/${value.paid_txid}`} target="_blank" rel="noopener noreferrer">COMPLETE <img src={Arrow} alt="photos"></img></a></li>}
                                     </ul>
@@ -491,7 +491,7 @@ class PreSaleController extends Component {
                                         <li>{Utils.convertDate(value.time * 1000)}</li>
                                         <li><a href={value.type === 'TRX' ? `https://tronscan.org/#/address/${value.buyer}` : `https://etherscan.io/address/${value.buyer}`} target="_blank" rel="noopener noreferrer" className="text-truncate">{value.buyer} <img src={Arrow} alt="photos"></img></a></li>
                                         <li>{value.round}</li>
-                                        <li>{`${value.amount} ${value.type}`}</li>
+                                        <li>{`${value.amount} USDT`}</li>
                                     </ul>
                                 </div>
                             )
